@@ -15,7 +15,11 @@
  *   Ian Craggs - fix for #96 - check rem_len in readPacket
  *   Ian Craggs - add ability to set message handler separately #6
  *******************************************************************************/
+#if defined(MQTTV5)
+#include "V5/MQTTV5Client.h"
+#else
 #include "MQTTClient.h"
+#endif
 
 #include <stdio.h>
 #include <string.h>

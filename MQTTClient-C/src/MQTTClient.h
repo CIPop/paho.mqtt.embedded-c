@@ -34,7 +34,11 @@
   #define DLLExport
 #endif
 
+#if defined(MQTTV5)
+#include "V5/MQTTPacket.h"
+#else
 #include "MQTTPacket.h"
+#endif
 
 #if defined(MQTTCLIENT_PLATFORM_HEADER)
 /* The following sequence of macros converts the MQTTCLIENT_PLATFORM_HEADER value
@@ -88,23 +92,39 @@ typedef struct MQTTMessage
     unsigned short id;
     void *payload;
     size_t payloadlen;
+#if defined(MQTTV5)
+    MQTTProperties* properties;
+#endif /* MQTTV5 */
 } MQTTMessage;
 
 typedef struct MessageData
 {
     MQTTMessage* message;
     MQTTString* topicName;
+#if defined(MQTTV5)
+    MQTTProperties* properties;
+#endif /* MQTTV5 */
 } MessageData;
 
 typedef struct MQTTConnackData
 {
     unsigned char rc;
     unsigned char sessionPresent;
+#if defined(MQTTV5)
+    MQTTProperties* properties;
+#endif /* MQTTV5 */
 } MQTTConnackData;
 
 typedef struct MQTTSubackData
 {
+<<<<<<< HEAD
     enum MQTTQoS grantedQoS;
+=======
+    enum QoS grantedQoS;
+#if defined(MQTTV5)
+    MQTTProperties* properties;
+#endif /* MQTTV5 */
+>>>>>>> 35f0527... WIP: Public API V5.
 } MQTTSubackData;
 
 typedef void (*messageHandler)(MessageData*);
@@ -120,7 +140,12 @@ typedef struct MQTTClient
     unsigned int keepAliveInterval;
     char ping_outstanding;
     int isconnected;
+
+#if defined(MQTTV5)
+    int cleanstart;
+#else
     int cleansession;
+#endif /* MQTTV5 */
 
     struct MessageHandlers
     {
@@ -140,13 +165,17 @@ typedef struct MQTTClient
 
 #define DefaultClient {0, 0, 0, 0, NULL, NULL, 0, 0, 0}
 
-
 /**
- * Create an MQTT client object
- * @param client
- * @param network
- * @param command_timeout_ms
- * @param
+ * @brief Create an MQTT client object
+ * 
+ * @param client 
+ * @param network 
+ * @param command_timeout_ms 
+ * @param sendbuf 
+ * @param sendbuf_size 
+ * @param readbuf 
+ * @param readbuf_size 
+ * @return DLLExport 
  */
 DLLExport void MQTTClientInit(MQTTClient* client, Network* network, unsigned int command_timeout_ms,
 		unsigned char* sendbuf, size_t sendbuf_size, unsigned char* readbuf, size_t readbuf_size);
