@@ -79,14 +79,7 @@ DLLExport int MQTTV5SetMessageHandler(MQTTClient* c, const char* topicFilter, me
  */
 DLLExport int MQTTV5Auth(MQTTClient* client, unsigned char reasonCode, MQTTProperties* properties);
 
-/**
- * @brief 
- * 
- * @param c 
- * @param authHandler 
- * @return DLLExport 
- */
-DLLExport int MQTTV5SetAuthHandler(MQTTClient* c, authHandler authHandler);
+DLLExport int MQTTV5SetAuthHandler(MQTTClient* c, controlHandler authHandler);
 
 /** MQTT Subscribe - send an MQTT subscribe packet and wait for suback before returning.
  *  @param client - the client object to use
@@ -117,6 +110,8 @@ DLLExport int MQTTV5Unsubscribe(MQTTClient* client, const char* topicFilter);
  *  @return success code
  */
 DLLExport int MQTTV5Disconnect(MQTTClient* client, unsigned char reasonCode, MQTTProperties* properties);
+
+DLLExport int MQTTV5SetDisconnectHandler(MQTTClient* c, controlHandler disconnectHandler);
 
 #if defined(__cplusplus)
      }

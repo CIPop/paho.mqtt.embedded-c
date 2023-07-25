@@ -130,7 +130,11 @@ typedef struct MQTTSubackData
 typedef void (*messageHandler)(MessageData*);
 
 #if defined(MQTTV5)
-typedef void (*authHandler)(MQTTProperties*, unsigned char reasonCode);
+/**
+ * @brief Control handler used for asynchronous MQTTv5 messages such as DISCONNECT and AUTH.
+ * 
+ */
+typedef void (*controlHandler)(MQTTProperties*, unsigned char reasonCode);
 #endif /* MQTTV5 */
 
 typedef struct MQTTClient
