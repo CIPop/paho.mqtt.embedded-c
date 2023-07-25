@@ -42,7 +42,7 @@ DLLExport void MQTTV5ClientInit(MQTTClient* client, Network* network, unsigned i
  *  @param options - connect options
  *  @return success code
  */
-DLLExport int MQTTV5ConnectWithResults(MQTTClient* client, MQTTV5Packet_connectData* options,
+DLLExport int MQTTV5ConnectWithResults(MQTTClient* client, MQTTPacket_connectData* options,
     MQTTConnackData* data);
 
 /** MQTT Connect - send an MQTT connect packet down the network and wait for a Connack
@@ -50,7 +50,7 @@ DLLExport int MQTTV5ConnectWithResults(MQTTClient* client, MQTTV5Packet_connectD
  *  @param options - connect options
  *  @return success code
  */
-DLLExport int MQTTV5Connect(MQTTClient* client, MQTTV5Packet_connectData* options);
+DLLExport int MQTTV5Connect(MQTTClient* client, MQTTPacket_connectData* options);
 
 /** MQTT Publish - send an MQTT publish packet and wait for all acks to complete for all QoSs
  *  @param client - the client object to use

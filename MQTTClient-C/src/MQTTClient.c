@@ -344,6 +344,7 @@ int cycle(MQTTClient* c, Timer* timer)
 #if defined(MQTTV5)
         case DISCONNECT:
             // TODO: not implemented.
+            break;
 #endif
     }
 
