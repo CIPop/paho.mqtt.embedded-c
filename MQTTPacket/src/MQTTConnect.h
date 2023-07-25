@@ -114,7 +114,7 @@ typedef struct
 	unsigned char cleanstart;
 #else
 	unsigned char cleansession;
-#endif
+#endif /* MQTTV5 */
 	unsigned char willFlag;
 	MQTTPacket_willOptions will;
 	MQTTString username;

@@ -38,7 +38,7 @@
 #include "V5/MQTTV5Packet.h"
 #else
 #include "MQTTPacket.h"
-#endif
+#endif /* MQTTV5 */
 
 #if defined(MQTTCLIENT_PLATFORM_HEADER)
 /* The following sequence of macros converts the MQTTCLIENT_PLATFORM_HEADER value
@@ -128,6 +128,10 @@ typedef struct MQTTSubackData
 } MQTTSubackData;
 
 typedef void (*messageHandler)(MessageData*);
+
+#if defined(MQTTV5)
+typedef void (*authHandler)(MQTTProperties*, unsigned char reasonCode);
+#endif /* MQTTV5 */
 
 typedef struct MQTTClient
 {
