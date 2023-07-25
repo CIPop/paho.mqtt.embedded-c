@@ -19,7 +19,7 @@
  extern "C" {
 #endif
 
-#include "MQTTClient.h"
+#include "../MQTTClient.h"
 #include "V5/MQTTV5Packet.h"
 
 /**

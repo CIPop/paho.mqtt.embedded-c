@@ -341,6 +341,10 @@ int cycle(MQTTClient* c, Timer* timer)
         case PINGRESP:
             c->ping_outstanding = 0;
             break;
+#if defined(MQTTV5)
+        case DISCONNECT:
+            // TODO: not implemented.
+#endif
     }
 
     if (keepalive(c) != MQTTCLIENT_SUCCESS) {

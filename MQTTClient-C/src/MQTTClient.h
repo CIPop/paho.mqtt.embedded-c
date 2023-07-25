@@ -35,7 +35,7 @@
 #endif
 
 #if defined(MQTTV5)
-#include "V5/MQTTPacket.h"
+#include "V5/MQTTV5Packet.h"
 #else
 #include "MQTTPacket.h"
 #endif
