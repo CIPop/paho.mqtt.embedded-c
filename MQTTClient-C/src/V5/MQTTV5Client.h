@@ -22,6 +22,13 @@
 #include "../MQTTClient.h"
 #include "V5/MQTTV5Packet.h"
 
+
+typedef struct MQTTV5UnsubackData
+{
+    enum ReasonCodes reasonCode;
+    MQTTProperties* properties;
+} MQTTV5UnsubackData;
+
 /**
  * @brief Create an MQTT client object
  * 
@@ -64,11 +71,9 @@ DLLExport int MQTTV5Publish(MQTTClient* client, const char* topic, MQTTMessage* 
   MQTTProperties* properties);
 
 
-// TODO: separate mechanism for send-pipeline (maintaining multiple in-flight PUBs w/o acking)
 DLLExport int MQTTV5PublishWithResults(MQTTClient* client, const char* topic, MQTTMessage* message, 
   MQTTProperties* properties, MQTTPubDoneData* ack);
 
-// TODO: separate mechanism for recv batch ACKing (maintaining multiple recvd PUBs w/o acking)
 /** MQTT SetMessageHandler - set or remove a per topic message handler
  *  @param client - the client object to use
  *  @param topicFilter - the topic filter set the message handler for
@@ -106,14 +111,17 @@ DLLExport int MQTTV5Subscribe(MQTTClient* client, const char* topicFilter, enum 
  *  @return success code
  */
 DLLExport int MQTTV5SubscribeWithResults(MQTTClient* client, const char* topicFilter, 
-  enum QoS, messageHandler, MQTTSubackData* data);
+  enum QoS qos, messageHandler messageHandler, MQTTSubackData* data);
 
 /** MQTT Subscribe - send an MQTT unsubscribe packet and wait for unsuback before returning.
  *  @param client - the client object to use
  *  @param topicFilter - the topic filter to unsubscribe from
  *  @return success code
  */
-DLLExport int MQTTV5Unsubscribe(MQTTClient* client, const char* topicFilter);
+DLLExport int MQTTV5Unsubscribe(MQTTClient* client, const char* topicFilter, MQTTProperties* properties);
+
+
+DLLExport int MQTTV5UnsubscribeWithResults(MQTTClient* client, const char* topicFilter, MQTTProperties* properties, MQTTV5UnsubackData* data);
 
 /** MQTT Disconnect - send an MQTT disconnect packet and close the connection
  *  @param client - the client object to use

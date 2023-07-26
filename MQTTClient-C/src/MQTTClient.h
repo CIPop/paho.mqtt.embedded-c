@@ -118,7 +118,7 @@ typedef struct MQTTConnackData
 typedef struct MQTTSubackData
 {
 #if defined(MQTTV5)
-    enum ReasonCodes* reasonCodes;
+    enum ReasonCodes reasonCode;
     MQTTProperties* properties;
 #else
     enum MQTTQoS grantedQoS;
