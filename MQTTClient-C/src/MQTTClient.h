@@ -117,24 +117,22 @@ typedef struct MQTTConnackData
 
 typedef struct MQTTSubackData
 {
-<<<<<<< HEAD
     enum MQTTQoS grantedQoS;
-=======
-    enum QoS grantedQoS;
 #if defined(MQTTV5)
     MQTTProperties* properties;
 #endif /* MQTTV5 */
->>>>>>> 35f0527... WIP: Public API V5.
 } MQTTSubackData;
 
 typedef void (*messageHandler)(MessageData*);
 
+
+// TODO: Getting properties, reason codes from all control messages:
 #if defined(MQTTV5)
 /**
- * @brief Control handler used for asynchronous MQTTv5 messages such as DISCONNECT and AUTH.
+ * @brief Control handler used for asynchronous MQTTv5 messages such as DISCONNECT, AUTH, and ACKs.
  * 
  */
-typedef void (*controlHandler)(MQTTProperties*, unsigned char reasonCode);
+typedef void (*controlHandler)(MQTTProperties* properties, unsigned char reasonCode, unsigned short id);
 #endif /* MQTTV5 */
 
 typedef struct MQTTClient
@@ -209,7 +207,7 @@ DLLExport int MQTTConnect(MQTTClient* client, MQTTPacket_connectData* options);
  *  @param message - the message to send
  *  @return success code
  */
-DLLExport int MQTTPublish(MQTTClient* client, const char* topicName, MQTTMessage*);
+DLLExport int MQTTPublish(MQTTClient* client, const char* topicName, MQTTMessage* message);
 
 /** MQTT SetMessageHandler - set or remove a per topic message handler
  *  @param client - the client object to use
