@@ -580,6 +580,10 @@ int MQTTSubscribeWithResults(MQTTClient* c, const char* topicFilter, enum MQTTQo
         int count = 0;
         unsigned short mypacketid;
         unsigned char grantedQoS = MQTTQOS_0;
+
+#if defined(MQTTV5)
+// TODO: V5 deserialization and QoS adapter.
+#else
         int retval = MQTTDeserialize_suback(&mypacketid, 1, &count, &grantedQoS, c->readbuf, c->readbuf_size);
         data->grantedQoS = grantedQoS;
         if (retval == 1)
@@ -587,6 +591,7 @@ int MQTTSubscribeWithResults(MQTTClient* c, const char* topicFilter, enum MQTTQo
             if (data->grantedQoS != 0x80)
                 rc = MQTTSetMessageHandler(c, topicFilter, messageHandler);
         }
+#endif /* MQTTV5 */
     }
     else
         rc = MQTTCLIENT_FAILURE;

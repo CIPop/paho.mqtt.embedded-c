@@ -117,19 +117,40 @@ typedef struct MQTTConnackData
 
 typedef struct MQTTSubackData
 {
-    enum MQTTQoS grantedQoS;
 #if defined(MQTTV5)
+    enum ReasonCodes* reasonCodes;
     MQTTProperties* properties;
+#else
+    enum MQTTQoS grantedQoS;
 #endif /* MQTTV5 */
 } MQTTSubackData;
 
-typedef void (*messageHandler)(MessageData*);
+/**
+ * @brief Data structure containing information about a published message.
+ * @note This structure is used for both QoS1 (PUBACK) and QoS2 (PUBCOMP) messages.
+ */
+typedef struct MQTTPubDoneData
+{
+    // id is omitted as it is already present in the MQTTMessage structure
+    unsigned char dup;
+#if defined(MQTTV5)
+    enum ReasonCodes reasonCode;
+    MQTTProperties* properties;
+#endif /* MQTTV5 */
+} MQTTPubDoneData;
 
+/**
+ * @brief Callback type for handling incoming messages.
+ * @note Separate callbacks can be used for each subscription filter.
+ * 
+ */
+typedef void (*messageHandler)(MessageData* received);
 
 // TODO: Getting properties, reason codes from all control messages:
 #if defined(MQTTV5)
 /**
- * @brief Control handler used for asynchronous MQTTv5 messages such as DISCONNECT, AUTH, and ACKs.
+ * @brief Callback type used for asynchronous MQTTv5 DISCONNECT and AUTH.
+ * @note Separate callbacks should be used for each control message type.
  * 
  */
 typedef void (*controlHandler)(MQTTProperties* properties, unsigned char reasonCode, unsigned short id);
@@ -209,6 +230,18 @@ DLLExport int MQTTConnect(MQTTClient* client, MQTTPacket_connectData* options);
  */
 DLLExport int MQTTPublish(MQTTClient* client, const char* topicName, MQTTMessage* message);
 
+/**
+ * @brief MQTT Publish - send an MQTT publish packet and wait for all acks to complete for all QoSs.
+ * @note This function blocks until the QoS1 PUBACK or QoS2 PUBCOMP is received.
+ * 
+ * @param client 
+ * @param topic 
+ * @param message 
+ * @param ack Acknowledgement information (from either a PUBACK or PUBCOMP message).
+ * @return success code
+ */
+DLLExport int MQTTPublishWithResults(MQTTClient* client, const char* topic, MQTTMessage* message, MQTTPubDoneData* ack);
+
 /** MQTT SetMessageHandler - set or remove a per topic message handler
  *  @param client - the client object to use
  *  @param topicFilter - the topic filter set the message handler for
@@ -223,7 +256,7 @@ DLLExport int MQTTSetMessageHandler(MQTTClient* c, const char* topicFilter, mess
  *  @param message - the message to send
  *  @return success code
  */
-DLLExport int MQTTSubscribe(MQTTClient* client, const char* topicFilter, enum MQTTQoS, messageHandler);
+DLLExport int MQTTSubscribe(MQTTClient* client, const char* topicFilter, enum MQTTQoS, messageHandler messageHandler);
 
 /** MQTT Subscribe - send an MQTT subscribe packet and wait for suback before returning.
  *  @param client - the client object to use
@@ -232,7 +265,7 @@ DLLExport int MQTTSubscribe(MQTTClient* client, const char* topicFilter, enum MQ
  *  @param data - suback granted QoS returned
  *  @return success code
  */
-DLLExport int MQTTSubscribeWithResults(MQTTClient* client, const char* topicFilter, enum MQTTQoS, messageHandler, MQTTSubackData* data);
+DLLExport int MQTTSubscribeWithResults(MQTTClient* client, const char* topicFilter, enum MQTTQoS qos, messageHandler messageHandler, MQTTSubackData* data);
 
 /** MQTT Subscribe - send an MQTT unsubscribe packet and wait for unsuback before returning.
  *  @param client - the client object to use

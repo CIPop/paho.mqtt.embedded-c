@@ -63,6 +63,12 @@ DLLExport int MQTTV5Connect(MQTTClient* client, MQTTPacket_connectData* options,
 DLLExport int MQTTV5Publish(MQTTClient* client, const char* topic, MQTTMessage* message, 
   MQTTProperties* properties);
 
+
+// TODO: separate mechanism for send-pipeline (maintaining multiple in-flight PUBs w/o acking)
+DLLExport int MQTTV5PublishWithResults(MQTTClient* client, const char* topic, MQTTMessage* message, 
+  MQTTProperties* properties, MQTTPubDoneData* ack);
+
+// TODO: separate mechanism for recv batch ACKing (maintaining multiple recvd PUBs w/o acking)
 /** MQTT SetMessageHandler - set or remove a per topic message handler
  *  @param client - the client object to use
  *  @param topicFilter - the topic filter set the message handler for
@@ -70,8 +76,6 @@ DLLExport int MQTTV5Publish(MQTTClient* client, const char* topic, MQTTMessage* 
  *  @return success code
  */
 DLLExport int MQTTV5SetMessageHandler(MQTTClient* c, const char* topicFilter, messageHandler messageHandler);
-
-DLLExport int MQTTV5SetAckHandler(MQTTClient* c, controlHandler ackHandler);
 
 /**
  * @brief MQTT Auth - send an MQTT AUTH packet
@@ -92,7 +96,7 @@ DLLExport int MQTTV5SetAuthHandler(MQTTClient* c, controlHandler authHandler);
  *  @return success code
  */
 DLLExport int MQTTV5Subscribe(MQTTClient* client, const char* topicFilter, enum QoS qos, 
-  messageHandler messageHandler, MQTTProperties* properties);
+  messageHandler messageHandler, MQTTProperties* properties, MQTTV5Packet_subscribeOptions options);
 
 /** MQTT Subscribe - send an MQTT subscribe packet and wait for suback before returning.
  *  @param client - the client object to use
