@@ -113,7 +113,7 @@ DLLExport int MQTTV5Subscribe(MQTTClient* client, const char* topicFilter, enum 
 DLLExport int MQTTV5SubscribeWithResults(MQTTClient* client, const char* topicFilter, 
   enum QoS qos, messageHandler messageHandler, MQTTSubackData* data);
 
-/** MQTT Subscribe - send an MQTT unsubscribe packet and wait for unsuback before returning.
+/** MQTT Unsubscribe - send an MQTT unsubscribe packet and wait for unsuback before returning.
  *  @param client - the client object to use
  *  @param topicFilter - the topic filter to unsubscribe from
  *  @return success code
