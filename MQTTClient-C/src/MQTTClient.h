@@ -118,7 +118,7 @@ typedef struct MQTTConnackData
 typedef struct MQTTSubackData
 {
 #if defined(MQTTV5)
-    enum ReasonCodes reasonCode;
+    enum MQTTReasonCodes reasonCode;
     MQTTProperties* properties;
 #else
     enum MQTTQoS grantedQoS;
@@ -134,7 +134,7 @@ typedef struct MQTTPubDoneData
     // id is omitted as it is already present in the MQTTMessage structure
     unsigned char dup;
 #if defined(MQTTV5)
-    enum ReasonCodes reasonCode;
+    enum MQTTReasonCodes reasonCode;
     MQTTProperties* properties;
 #endif /* MQTTV5 */
 } MQTTPubDoneData;

@@ -25,7 +25,7 @@
 
 typedef struct MQTTV5UnsubackData
 {
-    enum ReasonCodes reasonCode;
+    enum MQTTReasonCodes reasonCode;
     MQTTProperties* properties;
 } MQTTV5UnsubackData;
 
@@ -100,8 +100,8 @@ DLLExport int MQTTV5SetAuthHandler(MQTTClient* c, controlHandler authHandler);
  *  @param message - the message to send
  *  @return success code
  */
-DLLExport int MQTTV5Subscribe(MQTTClient* client, const char* topicFilter, enum QoS qos, 
-  messageHandler messageHandler, MQTTProperties* properties, MQTTV5Packet_subscribeOptions options);
+DLLExport int MQTTV5Subscribe(MQTTClient* client, const char* topicFilter, enum MQTTQoS qos, 
+  messageHandler messageHandler, MQTTProperties* properties, MQTTSubscribe_options options);
 
 /** MQTT Subscribe - send an MQTT subscribe packet and wait for suback before returning.
  *  @param client - the client object to use
@@ -111,7 +111,7 @@ DLLExport int MQTTV5Subscribe(MQTTClient* client, const char* topicFilter, enum 
  *  @return success code
  */
 DLLExport int MQTTV5SubscribeWithResults(MQTTClient* client, const char* topicFilter, 
-  enum QoS qos, messageHandler messageHandler, MQTTSubackData* data);
+  enum MQTTQoS qos, messageHandler messageHandler, MQTTSubackData* data);
 
 /** MQTT Unsubscribe - send an MQTT unsubscribe packet and wait for unsuback before returning.
  *  @param client - the client object to use
