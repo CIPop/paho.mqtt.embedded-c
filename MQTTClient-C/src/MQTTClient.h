@@ -163,8 +163,8 @@ typedef struct MQTTSubackData
 
 /**
  * @brief Data structure containing information about a published message.
- * @note This structure is used for both QoS1 (PUBACK) and QoS2 (PUBCOMP) messages.
- * @note The `id` field is omitted as it is already present in the `MQTTMessage` structure.
+ * @remark This structure is used for both QoS1 (PUBACK) and QoS2 (PUBCOMP) messages.
+ * @remark The `id` field is omitted as it is already present in the `MQTTMessage` structure.
  */
 typedef struct MQTTPubDoneData
 {
@@ -180,7 +180,7 @@ typedef struct MQTTPubDoneData
 
 /**
  * @brief Callback type for handling incoming messages.
- * @note Separate callbacks can be used for each subscription filter.
+ * @remark Separate callbacks can be used for each subscription filter.
  * 
  * @param received The received message.
  */
@@ -189,7 +189,7 @@ typedef void (*messageHandler)(MessageData* received);
 #if defined(MQTTV5)
 /**
  * @brief Callback type used for asynchronous MQTTv5 DISCONNECT and AUTH.
- * @note Separate callbacks should be used for each control message type.
+ * @remark Separate callbacks should be used for each control message type.
  * 
  * @param properties The MQTTv5 message properties.
  * @param reasonCode The MQTTv5 reason code.
@@ -266,7 +266,7 @@ DLLExport void MQTTClientInit(MQTTClient* client, Network* network, unsigned int
  * @param client The `MQTTClient` object to use.
  * @param options The connect options.
  * @param connack CONNACK response information.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTConnectWithResults(MQTTClient* client, MQTTPacket_connectData* options,
     MQTTConnackData* connack);
@@ -277,7 +277,7 @@ DLLExport int MQTTConnectWithResults(MQTTClient* client, MQTTPacket_connectData*
  * 
  * @param client The `MQTTClient` object to use.
  * @param options The connect options.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTConnect(MQTTClient* client, MQTTPacket_connectData* options);
 
@@ -287,19 +287,19 @@ DLLExport int MQTTConnect(MQTTClient* client, MQTTPacket_connectData* options);
  * @param client The `MQTTClient` object to use. 
  * @param topicName The topic to publish to.
  * @param message The `MQTTMessage` message to send.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTPublish(MQTTClient* client, const char* topicName, MQTTMessage* message);
 
 /**
  * @brief MQTT Publish - send an MQTT publish packet and wait for all acks (PUBACK or PUBCOMP) to complete for all QoSs.
- * @note This function blocks until the QoS1 PUBACK or QoS2 PUBCOMP is received.
+ * @remark This function blocks until the QoS1 PUBACK or QoS2 PUBCOMP is received.
  * 
  * @param client The `MQTTClient` object to use.
  * @param topic The topic to publish to.
  * @param message The message to send.
  * @param ack Acknowledgement information (from either a PUBACK or PUBCOMP message).
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTPublishWithResults(MQTTClient* client, const char* topic, MQTTMessage* message, MQTTPubDoneData* ack);
 
@@ -309,7 +309,7 @@ DLLExport int MQTTPublishWithResults(MQTTClient* client, const char* topic, MQTT
  * @param client The `MQTTClient` object to use.
  * @param topicFilter The topic filter for the message handler.
  * @param messageHandler The message handler function or NULL to remove.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTSetMessageHandler(MQTTClient* client, const char* topicFilter, messageHandler messageHandler);
 
@@ -320,7 +320,7 @@ DLLExport int MQTTSetMessageHandler(MQTTClient* client, const char* topicFilter,
  * @param topicFilter The topic filter to subscribe.
  * @param requestedQoS The requested QoS.
  * @param messageHandler The message handler function. If `NULL`, it will remove an existing messageHandler for this topicFilter.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTSubscribe(MQTTClient* client, const char* topicFilter, enum MQTTQoS requestedQoS, messageHandler messageHandler);
 
@@ -329,18 +329,20 @@ DLLExport int MQTTSubscribe(MQTTClient* client, const char* topicFilter, enum MQ
  * 
  * @param client The `MQTTClient` object to use.
  * @param topicFilter The topic filter to subscribe.
+ * @param requestedQoS The requested QoS.
  * @param messageHandler The message handler function. If `NULL`, it will remove an existing messageHandler for this topicFilter.
  * @param suback Subscription acknowledgement information.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
-DLLExport int MQTTSubscribeWithResults(MQTTClient* client, const char* topicFilter, enum MQTTQoS qos, messageHandler messageHandler, MQTTSubackData* suback);
+DLLExport int MQTTSubscribeWithResults(MQTTClient* client, const char* topicFilter, enum MQTTQoS requestedQoS, 
+  messageHandler messageHandler, MQTTSubackData* suback);
 
 /**
  * @brief MQTT Unsubscribe - send an MQTT unsubscribe packet and wait for UNSUBACK before returning.
  * 
  * @param client The `MQTTClient` object to use.
  * @param topicFilter The topic filter to unsubscribe.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTUnsubscribe(MQTTClient* client, const char* topicFilter);
 
@@ -348,7 +350,7 @@ DLLExport int MQTTUnsubscribe(MQTTClient* client, const char* topicFilter);
  * @brief MQTT Disconnect - send an MQTT disconnect packet and close the connection.
  * 
  * @param client The `MQTTClient` object to use.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTDisconnect(MQTTClient* client);
 
@@ -360,7 +362,7 @@ DLLExport int MQTTDisconnect(MQTTClient* client);
  * 
  * @param client The `MQTTClient` object to use.
  * @param timeout_ms The time to wait, in milliseconds.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTYield(MQTTClient* client, int timeout_ms);
 
@@ -378,7 +380,7 @@ DLLExport int MQTTIsConnected(MQTTClient* client);
  * @note After this, `MQTTYield` should not be called.
  * 
  * @param client The `MQTTClient` object to use.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTStartTask(MQTTClient* client);
 #endif

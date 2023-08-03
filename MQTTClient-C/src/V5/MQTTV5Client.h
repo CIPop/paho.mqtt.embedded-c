@@ -32,7 +32,7 @@ typedef struct MQTTV5UnsubackData
 {
     /// @brief The MQTTv5 message properties.
     MQTTProperties* properties;
-    /// @brief The MQTT reason code.
+    /// @brief The MQTTv5 reason code.
     enum MQTTReasonCodes reasonCode;
 } MQTTV5UnsubackData;
 
@@ -49,10 +49,10 @@ typedef struct MQTTV5UnsubackData
  * @param recvProperties The MQTTv5 receive properties. This allocation will be used for all MQTTv5 packets.
  * @param truncateRecvProperties If true, the MQTTv5 properties will be truncated if they do not fit in the `recvProperties` buffer.
  * 
- * @note If `recvProperties` does not contain sufficient space for the received properties and `truncateRecvProperties` is false, 
+ * @remark If `recvProperties` does not contain sufficient space for the received properties and `truncateRecvProperties` is false, 
  *       `MQTTYield` will fail with `MQTTCLIENT_BUFFER_OVERFLOW`.
  * 
- * @note If the `MQTTClient` is initialized with `MQTTV5ClientInit`, any of the non-versioned functions (e.g. `MQTTPublish`) will
+ * @remark If the `MQTTClient` is initialized with `MQTTV5ClientInit`, any of the non-versioned functions (e.g. `MQTTPublish`) will
  *       work as expected. However, v5 functions (e.g. `MQTTV5Publish`) must be used to access MQTTv5 features.
  */
 DLLExport void MQTTV5ClientInit(MQTTClient* client, Network* network, unsigned int command_timeout_ms,
@@ -68,7 +68,7 @@ DLLExport void MQTTV5ClientInit(MQTTClient* client, Network* network, unsigned i
  * @param connectProperties The MQTTv5 connect properties.
  * @param willProperties The MQTTv5 will properties.
  * @param connack CONNACK response information.
- * @return 0 on success. If negative, an `MQTTClientReturnCode` indicating success or failure. 
+ * @return 0 on success. If negative, an #MQTTClientReturnCode indicating success or failure. 
  *         If positive, the `MQTTReasonCodes` returned by the server.
  */
 DLLExport int MQTTV5ConnectWithResults(MQTTClient* client, MQTTPacket_connectData* options,
@@ -82,7 +82,7 @@ DLLExport int MQTTV5ConnectWithResults(MQTTClient* client, MQTTPacket_connectDat
  * @param options The connect options.
  * @param connectProperties The MQTTv5 connect properties.
  * @param willProperties The MQTTv5 will properties.
- * @return 0 on success. If negative, an `MQTTClientReturnCode` indicating success or failure. 
+ * @return 0 on success. If negative, an #MQTTClientReturnCode indicating success or failure. 
  *         If positive, the `MQTTReasonCodes` returned by the server.
  */
 DLLExport int MQTTV5Connect(MQTTClient* client, MQTTPacket_connectData* options, 
@@ -95,7 +95,7 @@ DLLExport int MQTTV5Connect(MQTTClient* client, MQTTPacket_connectData* options,
  * @param topicName The topic to publish to.
  * @param message The `MQTTMessage` message to send.
  * @param properties The MQTTv5 publish properties.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5Publish(MQTTClient* client, const char* topicName, MQTTMessage* message, 
   MQTTProperties* properties);
@@ -109,7 +109,7 @@ DLLExport int MQTTV5Publish(MQTTClient* client, const char* topicName, MQTTMessa
  * @param message The message to send.
  * @param properties The MQTTv5 publish properties.
  * @param ack Acknowledgement information (from either a PUBACK or PUBCOMP message).
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5PublishWithResults(MQTTClient* client, const char* topic, MQTTMessage* message, 
   MQTTProperties* properties, MQTTPubDoneData* ack);
@@ -120,7 +120,7 @@ DLLExport int MQTTV5PublishWithResults(MQTTClient* client, const char* topic, MQ
  * @param client The `MQTTClient` object to use.
  * @param topicFilter The topic filter for the message handler.
  * @param messageHandler The message handler function or NULL to remove.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5SetMessageHandler(MQTTClient* client, const char* topicFilter, messageHandler messageHandler);
 
@@ -130,7 +130,7 @@ DLLExport int MQTTV5SetMessageHandler(MQTTClient* client, const char* topicFilte
  * @param client The `MQTTClient` object to use.
  * @param reasonCode The MQTTv5 reason code.
  * @param properties The MQTTv5 properties.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5Auth(MQTTClient* client, unsigned char reasonCode, MQTTProperties* properties);
 
@@ -139,7 +139,7 @@ DLLExport int MQTTV5Auth(MQTTClient* client, unsigned char reasonCode, MQTTPrope
  * 
  * @param client The `MQTTClient` object to use.
  * @param authHandler The AUTH receive handler function or NULL to remove.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5SetAuthHandler(MQTTClient* client, controlHandler authHandler);
 
@@ -152,7 +152,7 @@ DLLExport int MQTTV5SetAuthHandler(MQTTClient* client, controlHandler authHandle
  * @param properties The MQTTv5 subscribe properties.
  * @param options The MQTTv5 subscribe options.
  * @param messageHandler The message handler function. If `NULL`, it will remove an existing messageHandler for this topicFilter.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5Subscribe(MQTTClient* client, const char* topicFilter, enum MQTTQoS requestedQoS, 
   MQTTProperties* properties, MQTTSubscribe_options options, messageHandler messageHandler);
@@ -167,7 +167,7 @@ DLLExport int MQTTV5Subscribe(MQTTClient* client, const char* topicFilter, enum 
  * @param options The MQTTv5 subscribe options.
  * @param messageHandler The message handler function. If `NULL`, it will remove an existing messageHandler for this topicFilter.
  * @param suback Subscription acknowledgement information.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5SubscribeWithResults(MQTTClient* client, const char* topicFilter, enum MQTTQoS requestedQoS, 
   MQTTProperties* properties, MQTTSubscribe_options options, messageHandler messageHandler, MQTTSubackData* suback);
@@ -178,7 +178,7 @@ DLLExport int MQTTV5SubscribeWithResults(MQTTClient* client, const char* topicFi
  * @param client The `MQTTClient` object to use.
  * @param topicFilter The topic filter to unsubscribe.
  * @param properties The MQTTv5 unsubscribe properties.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5Unsubscribe(MQTTClient* client, const char* topicFilter, MQTTProperties* properties);
 
@@ -189,7 +189,7 @@ DLLExport int MQTTV5Unsubscribe(MQTTClient* client, const char* topicFilter, MQT
  * @param topicFilter The topic filter to unsubscribe.
  * @param properties The MQTTv5 unsubscribe properties.
  * @param unsuback Unsubscription acknowledgement information.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5UnsubscribeWithResults(MQTTClient* client, const char* topicFilter, MQTTProperties* properties, 
   MQTTV5UnsubackData* unsuback);
@@ -200,7 +200,7 @@ DLLExport int MQTTV5UnsubscribeWithResults(MQTTClient* client, const char* topic
  * @param client The `MQTTClient` object to use.
  * @param reasonCode The MQTTv5 reason code.
  * @param properties The MQTTv5 disconnect properties.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5Disconnect(MQTTClient* client, unsigned char reasonCode, MQTTProperties* properties);
 
@@ -209,7 +209,7 @@ DLLExport int MQTTV5Disconnect(MQTTClient* client, unsigned char reasonCode, MQT
  * 
  * @param client The `MQTTClient` object to use.
  * @param disconnectHandler The AUTH receive handler function or NULL to remove.
- * @return An `MQTTClientReturnCode` indicating success or failure.
+ * @return An #MQTTClientReturnCode indicating success or failure.
  */
 DLLExport int MQTTV5SetDisconnectHandler(MQTTClient* client, controlHandler disconnectHandler);
 
