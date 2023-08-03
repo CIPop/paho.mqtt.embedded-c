@@ -218,6 +218,7 @@ typedef struct MQTTClient
 
 #if defined(MQTTV5)
     int cleanstart;
+    MQTTProperties* recvProperties;
 #else
     int cleansession;
 #endif /* MQTTV5 */
@@ -259,7 +260,7 @@ DLLExport void MQTTClientInit(MQTTClient* client, Network* network, unsigned int
 		unsigned char* sendbuf, size_t sendbuf_size, unsigned char* readbuf, size_t readbuf_size);
 
 /**
- * @brief MQTT Connect - send an MQTT connect packet down the network and wait for a Connack.
+ * @brief MQTT Connect - send an MQTT connect packet down the network and wait for a CONNACK.
  * @note The network object must be connected to the network endpoint before calling this.
  * 
  * @param client The `MQTTClient` object to use.
@@ -271,7 +272,7 @@ DLLExport int MQTTConnectWithResults(MQTTClient* client, MQTTPacket_connectData*
     MQTTConnackData* connack);
 
 /**
- * @brief MQTT Connect - send an MQTT connect packet down the network and wait for a Connack.
+ * @brief MQTT Connect - send an MQTT connect packet down the network and wait for a CONNACK.
  * @note The network object must be connected to the network endpoint before calling this.
  * 
  * @param client The `MQTTClient` object to use.
@@ -281,7 +282,7 @@ DLLExport int MQTTConnectWithResults(MQTTClient* client, MQTTPacket_connectData*
 DLLExport int MQTTConnect(MQTTClient* client, MQTTPacket_connectData* options);
 
 /**
- * @brief MQTT Publish - send an MQTT publish packet and wait for all acks to complete for all QoSs.
+ * @brief MQTT Publish - send an MQTT publish packet and wait for all acks (PUBACK or PUBCOMP) to complete for all QoSs.
  * 
  * @param client The `MQTTClient` object to use. 
  * @param topicName The topic to publish to.
@@ -291,7 +292,7 @@ DLLExport int MQTTConnect(MQTTClient* client, MQTTPacket_connectData* options);
 DLLExport int MQTTPublish(MQTTClient* client, const char* topicName, MQTTMessage* message);
 
 /**
- * @brief MQTT Publish - send an MQTT publish packet and wait for all acks to complete for all QoSs.
+ * @brief MQTT Publish - send an MQTT publish packet and wait for all acks (PUBACK or PUBCOMP) to complete for all QoSs.
  * @note This function blocks until the QoS1 PUBACK or QoS2 PUBCOMP is received.
  * 
  * @param client The `MQTTClient` object to use.
@@ -303,7 +304,7 @@ DLLExport int MQTTPublish(MQTTClient* client, const char* topicName, MQTTMessage
 DLLExport int MQTTPublishWithResults(MQTTClient* client, const char* topic, MQTTMessage* message, MQTTPubDoneData* ack);
 
 /**
- * @brief MQTT SetMessageHandler - set or remove a per topic message handler
+ * @brief Set or remove a per topic message (Publish) receive handler.
  * 
  * @param client The `MQTTClient` object to use.
  * @param topicFilter The topic filter for the message handler.
@@ -313,17 +314,18 @@ DLLExport int MQTTPublishWithResults(MQTTClient* client, const char* topic, MQTT
 DLLExport int MQTTSetMessageHandler(MQTTClient* client, const char* topicFilter, messageHandler messageHandler);
 
 /**
- * @brief MQTT Subscribe - send an MQTT subscribe packet and wait for suback before returning.
+ * @brief MQTT Subscribe - send an MQTT subscribe packet for a single topic filter and wait for SUBACK before returning.
  * 
  * @param client The `MQTTClient` object to use.
  * @param topicFilter The topic filter to subscribe.
+ * @param requestedQoS The requested QoS.
  * @param messageHandler The message handler function. If `NULL`, it will remove an existing messageHandler for this topicFilter.
  * @return An `MQTTClientReturnCode` indicating success or failure.
  */
-DLLExport int MQTTSubscribe(MQTTClient* client, const char* topicFilter, enum MQTTQoS, messageHandler messageHandler);
+DLLExport int MQTTSubscribe(MQTTClient* client, const char* topicFilter, enum MQTTQoS requestedQoS, messageHandler messageHandler);
 
 /**
- * @brief MQTT Subscribe - send an MQTT subscribe packet and wait for suback before returning.
+ * @brief MQTT Subscribe - send an MQTT subscribe packet for a single topic filter and wait for SUBACK before returning.
  * 
  * @param client The `MQTTClient` object to use.
  * @param topicFilter The topic filter to subscribe.
@@ -333,14 +335,8 @@ DLLExport int MQTTSubscribe(MQTTClient* client, const char* topicFilter, enum MQ
  */
 DLLExport int MQTTSubscribeWithResults(MQTTClient* client, const char* topicFilter, enum MQTTQoS qos, messageHandler messageHandler, MQTTSubackData* suback);
 
-/** MQTT Subscribe - send an MQTT unsubscribe packet and wait for unsuback before returning.
- *  @param client - the client object to use
- *  @param topicFilter - the topic filter to unsubscribe from
- *  @return success code
- */
-
 /**
- * @brief MQTT Unsubscribe - send an MQTT unsubscribe packet and wait for unsuback before returning.
+ * @brief MQTT Unsubscribe - send an MQTT unsubscribe packet and wait for UNSUBACK before returning.
  * 
  * @param client The `MQTTClient` object to use.
  * @param topicFilter The topic filter to unsubscribe.
