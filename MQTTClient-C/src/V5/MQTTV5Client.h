@@ -23,32 +23,46 @@
 #include "V5/MQTTV5Packet.h"
 
 
+/**
+ * @brief Data structure containing MQTTv5 UNSUBACK information.
+ * 
+ */
 typedef struct MQTTV5UnsubackData
 {
-    enum MQTTReasonCodes reasonCode;
+    /// @brief The MQTTv5 message properties.
     MQTTProperties* properties;
+    /// @brief The MQTT reason code.
+    enum MQTTReasonCodes reasonCode;
 } MQTTV5UnsubackData;
 
 /**
- * @brief Create an MQTT client object
+ * @brief Create an `MQTTClient` for an MQTTv5 connection.
  * 
- * @param client 
- * @param network 
- * @param command_timeout_ms 
- * @param sendbuf 
- * @param sendbuf_size 
- * @param readbuf 
- * @param readbuf_size 
- * @return DLLExport 
+ * @param client The `MQTTClient` object to initialize.
+ * @param network The `Network` object to use. 
+ * @param command_timeout_ms The command timeout value in milliseconds. 
+ * @param sendbuf The send buffer.
+ * @param sendbuf_size The size of the `sendbuf` buffer. 
+ * @param readbuf The read buffer.
+ * @param readbuf_size The size of the `readbuf` buffer.
+ * @param recvProperties The MQTTv5 receive properties. This allocation will be used for all MQTTv5 packets.
+ * @param truncateRecvProperties If true, the MQTTv5 properties will be truncated if they do not fit in the `recvProperties` buffer.
+ * 
+ * @note If `recvProperties` does not contain sufficient space for the received properties and `truncateRecvProperties` is false, 
+ *       `MQTTYield` will fail with `MQTTCLIENT_BUFFER_OVERFLOW`.
  */
 DLLExport void MQTTV5ClientInit(MQTTClient* client, Network* network, unsigned int command_timeout_ms,
 		unsigned char* sendbuf, size_t sendbuf_size, unsigned char* readbuf, size_t readbuf_size, 
-    MQTTProperties* recvProperties);
+    MQTTProperties* recvProperties, bool truncateRecvProperties);
 
-/** MQTT Connect - send an MQTT connect packet down the network and wait for a Connack
- *  The network object must be connected to the network endpoint before calling this
- *  @param options - connect options
- *  @return success code
+/**
+ * @brief MQTT Connect - send an MQTT connect packet down the network and wait for a Connack.
+ * @note The network object must be connected to the network endpoint before calling this.
+ * 
+ * @param client The `MQTTClient` object to use.
+ * @param options The connect options.
+ * @param connack CONNACK response information.
+ * @return An `MQTTClientReturnCode` indicating success or failure.
  */
 DLLExport int MQTTV5ConnectWithResults(MQTTClient* client, MQTTPacket_connectData* options,
     MQTTProperties* connectProperties, MQTTProperties* willProperties, MQTTConnackData* data);
