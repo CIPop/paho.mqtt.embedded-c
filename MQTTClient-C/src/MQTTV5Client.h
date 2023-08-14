@@ -20,7 +20,7 @@
 #endif
 
 #include <stdbool.h>
-#include "../MQTTClient.h"
+#include "MQTTClientCommon.h"
 #include "MQTTV5Packet.h"
 
 

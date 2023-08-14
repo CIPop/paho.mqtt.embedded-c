@@ -16,7 +16,7 @@
  *   Ian Craggs - add ability to set message handler separately #6
  *******************************************************************************/
 #if defined(MQTTV5)
-#include "V5/MQTTV5Client.h"
+#include "MQTTV5Client.h"
 #else
 #include "MQTTClient.h"
 #endif
