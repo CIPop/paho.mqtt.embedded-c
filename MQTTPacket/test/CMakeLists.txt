@@ -88,3 +88,30 @@ SET_TESTS_PROPERTIES(
 	test3
 	PROPERTIES TIMEOUT 540
 )
+
+ADD_EXECUTABLE(
+	test35
+	test35.c
+	../samples/transport.c
+)
+
+# Disabling deprecation warnings:
+#  warning: ‘ftime’ is deprecated [-Wdeprecated-declarations]
+target_compile_options(test35 PRIVATE -Wno-deprecated-declarations)
+target_compile_definitions(test35 PRIVATE NOSIGPIPE)
+
+TARGET_LINK_LIBRARIES(
+	test35
+	paho-embed-mqtt3c
+	paho-embed-mqtt5c
+)
+
+ADD_TEST(
+	NAME test35
+	COMMAND "test35" "--connection" ${MQTT_TEST_BROKER}
+)
+
+SET_TESTS_PROPERTIES(
+	test35
+	PROPERTIES TIMEOUT 540
+)
