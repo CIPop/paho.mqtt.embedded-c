@@ -36,6 +36,10 @@
 #define ECONNRESET WSAECONNRESET
 #endif
 
+#if defined(__cplusplus) /* If this is a C++ compiler, use C linkage */
+extern "C" {
+#endif
+
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 struct Options
@@ -44,7 +48,9 @@ struct Options
 	int port;
 	int verbose;
 	int test_no;
-} options =
+};
+
+static struct Options options =
 {
 	"localhost",
 	1883,
@@ -52,181 +58,56 @@ struct Options
 	0,
 };
 
-void usage()
-{
-
-}
-
-void getopts(int argc, char** argv)
-{
-	int count = 1;
-
-	while (count < argc)
-	{
-		if (strcmp(argv[count], "--test_no") == 0)
-		{
-			if (++count < argc)
-				options.test_no = atoi(argv[count]);
-			else
-				usage();
-		}
-		else if (strcmp(argv[count], "--host") == 0)
-		{
-			if (++count < argc)
-			{
-				options.host = argv[count];
-				printf("\nSetting host to %s\n", options.host);
-			}
-			else
-				usage();
-		}
-		else if (strcmp(argv[count], "--port") == 0)
-		{
-			if (++count < argc)
-				options.port = atoi(argv[count]);
-			else
-				usage();
-		}
-		else if (strcmp(argv[count], "--verbose") == 0)
-		{
-			options.verbose = 1;
-			printf("\nSetting verbose on\n");
-		}
-		count++;
-	}
-}
+void usage();
+void getopts(int argc, char** argv);
 
 #define LOGA_DEBUG 0
 #define LOGA_INFO 1
 #include <stdarg.h>
 #include <time.h>
 #include <sys/timeb.h>
-void MyLog(int LOGA_level, char* format, ...)
-{
-	static char msg_buf[256];
-	va_list args;
-	struct timeb ts;
-
-	struct tm *timeinfo;
-
-	if (LOGA_level == LOGA_DEBUG && options.verbose == 0)
-	  return;
-
-	ftime(&ts);
-	timeinfo = localtime(&ts.time);
-	strftime(msg_buf, 80, "%Y%m%d %H%M%S", timeinfo);
-
-	sprintf(&msg_buf[strlen(msg_buf)], ".%.3hu ", ts.millitm);
-
-	va_start(args, format);
-	vsnprintf(&msg_buf[strlen(msg_buf)], sizeof(msg_buf) - strlen(msg_buf), format, args);
-	va_end(args);
-
-	printf("%s\n", msg_buf);
-	fflush(stdout);
-}
-
+void MyLog(int LOGA_level, char* format, ...);
 
 #if defined(WIN32) || defined(_WINDOWS)
 #define mqsleep(A) Sleep(1000*A)
 #define START_TIME_TYPE DWORD
 static DWORD start_time = 0;
-START_TIME_TYPE start_clock(void)
-{
-	return GetTickCount();
-}
+START_TIME_TYPE start_clock(void);
 #elif defined(AIX)
 #define mqsleep sleep
 #define START_TIME_TYPE struct timespec
-START_TIME_TYPE start_clock(void)
-{
-	static struct timespec start;
-	clock_gettime(CLOCK_REALTIME, &start);
-	return start;
-}
+START_TIME_TYPE start_clock(void);
 #else
 #define mqsleep sleep
 #define START_TIME_TYPE struct timeval
-START_TIME_TYPE start_clock(void)
-{
-	struct timeval start_time;
-	gettimeofday(&start_time, NULL);
-	return start_time;
-}
+START_TIME_TYPE start_clock(void);
 #endif
-
 
 #if defined(WIN32)
-long elapsed(START_TIME_TYPE start_time)
-{
-	return GetTickCount() - start_time;
-}
+long elapsed(START_TIME_TYPE start_time);
 #elif defined(AIX)
 #define assert(a)
-long elapsed(struct timespec start)
-{
-	struct timespec now, res;
-
-	clock_gettime(CLOCK_REALTIME, &now);
-	ntimersub(now, start, res);
-	return (res.tv_sec)*1000L + (res.tv_nsec)/1000000L;
-}
+long elapsed(struct timespec start);
 #else
-long elapsed(START_TIME_TYPE start_time)
-{
-	struct timeval now, res;
-
-	gettimeofday(&now, NULL);
-	timersub(&now, &start_time, &res);
-	return (res.tv_sec)*1000 + (res.tv_usec)/1000;
-}
+long elapsed(START_TIME_TYPE start_time);
 #endif
-
 
 #define assert(a, b, c, d) myassert(__FILE__, __LINE__, a, b, c, d)
 #define assert1(a, b, c, d, e) myassert(__FILE__, __LINE__, a, b, c, d, e)
 
-int tests = 0;
-int failures = 0;
-FILE* xml;
-START_TIME_TYPE global_start_time;
-char output[3000];
-char* cur_output = output;
+static int tests = 0;
+static int failures = 0;
+static FILE* xml;
+static START_TIME_TYPE global_start_time;
+static char output[3000];
+static char* cur_output = output;
 
+void write_test_result();
 
-void write_test_result()
-{
-	long duration = elapsed(global_start_time);
+void myassert(char* filename, int lineno, char* description, int value, char* format, ...);
 
-	fprintf(xml, " time=\"%ld.%.3ld\" >\n", duration / 1000, duration % 1000);
-	if (cur_output != output)
-	{
-		fprintf(xml, "%s", output);
-		cur_output = output;
-	}
-	fprintf(xml, "</testcase>\n");
+#ifdef __cplusplus /* If this is a C++ compiler, use C linkage */
 }
-
-
-void myassert(char* filename, int lineno, char* description, int value, char* format, ...)
-{
-	++tests;
-	if (!value)
-	{
-		va_list args;
-
-		++failures;
-		printf("Assertion failed, file %s, line %d, description: %s\n", filename, lineno, description);
-
-		va_start(args, format);
-		vprintf(format, args);
-		va_end(args);
-
-		cur_output += sprintf(cur_output, "<failure type=\"%s\">file %s, line %d </failure>\n",
-                        description, filename, lineno);
-	}
-    else
-    	MyLog(LOGA_DEBUG, "Assertion succeeded, file %s, line %d, description: %s", filename, lineno, description);
-}
+#endif
 
 #endif // TEST_FRAMEWORK_H_
