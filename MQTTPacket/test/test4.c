@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2023 IBM Corp., Ian Craggs and others
+ * Copyright (c) 2023 Microsoft Corporation. All rights reserved.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,28 +10,25 @@
  * and the Eclipse Distribution License is available at
  *   http://www.eclipse.org/org/documents/edl-v10.php.
  *
- * Contributors:
- *    Ian Craggs - initial API and implementation and/or initial documentation
- *    Sergio R. Caprile - clarifications and/or documentation extension
  *******************************************************************************/
 
 /***
-  Test MQTTPacket against a broker.
+  Test MQTTV5Packet against a broker.
 ***/
 
 #include "test_framework.h"
-#include "MQTTPacket.h"
+#include "MQTTV5Packet.h"
 #include "transport.h"
 
-#include "test_mqtt3.h"
+#include "test_mqtt5.h"
 
 int main(int argc, char** argv)
 {
 	int rc = 0;
- 	int (*tests[])(struct Options) = {NULL, test_v3};
+ 	int (*tests[])(struct Options) = {NULL, test_v5};
 
-	xml = fopen("TEST-test3.xml", "w");
-	fprintf(xml, "<testsuite name=\"test1\" tests=\"%d\">\n", (int)(ARRAY_SIZE(tests) - 1));
+	xml = fopen("TEST-test4.xml", "w");
+	fprintf(xml, "<testsuite name=\"test35\" tests=\"%d\">\n", (int)(ARRAY_SIZE(tests) - 1));
 
 	getopts(argc, argv);
 
